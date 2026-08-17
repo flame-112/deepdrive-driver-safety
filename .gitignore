@@ -1,0 +1,21 @@
+# Python environments and bytecode
+.venv/
+__pycache__/
+*.py[cod]
+
+# Local tooling
+.pytest_cache/
+.mypy_cache/
+.vscode/
+
+# Project-generated media and data
+data/raw/
+data/processed/
+models/
+results/
+*.mp4
+*.avi
+
+# Operating-system files
+Thumbs.db
+.DS_Store

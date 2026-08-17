@@ -1,0 +1,17 @@
+# First milestone: webcam capture and facial-landmark visualization.
+# This compatible set avoids MediaPipe's unbounded JAX/OpenCV transitive
+# dependencies drifting to versions that require NumPy 2.x.
+absl-py==2.1.0
+attrs==24.2.0
+flatbuffers==24.3.25
+jax==0.4.28
+jaxlib==0.4.28
+matplotlib==3.8.4
+mediapipe==0.10.21
+ml-dtypes==0.3.2
+numpy==1.26.4
+opencv-contrib-python==4.10.0.84
+protobuf==4.25.3
+scipy==1.11.4
+sounddevice==0.4.7
+sentencepiece==0.2.0
