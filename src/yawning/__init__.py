@@ -1,0 +1,1 @@
+"""Observable yawn analysis. A yawn is a long mouth opening, not a fatigue diagnosis."""

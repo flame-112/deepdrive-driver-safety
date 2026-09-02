@@ -4,15 +4,20 @@ DeepDrive is a student-built computer-vision prototype for real-time driver-risk
 
 It is an assistance and monitoring prototype. It does not diagnose internal mental states or claim to prevent accidents.
 
-## First milestone
+## Current milestone
 
-The current milestone is deliberately limited to a reliable live video foundation:
+Live driver-face monitoring currently includes:
 
-- open a webcam with OpenCV;
-- detect a face and obtain MediaPipe Face Mesh landmarks;
-- highlight eye and mouth landmarks in real time.
+- webcam capture with OpenCV;
+- MediaPipe Face Mesh landmarks (eyes in green, mouth in orange);
+- left, right, and averaged Eye Aspect Ratio (EAR);
+- blink counting vs prolonged eye closure from EAR over time;
+- a drowsiness *estimate* (LOW / MODERATE / HIGH) from prolonged closure and a simplified PERCLOS;
+- Mouth Aspect Ratio (MAR) and yawn detection (long mouth opening).
 
-No drowsiness, yawn, distraction, phone, or seatbelt decision is made yet.
+A blink is a short closure that ends when the eyes open again. Prolonged closure is shown if the eyes stay closed for about one second. The drowsiness line is an estimate from those observables, not a medical diagnosis. A **yawn** is a mouth opening that lasts about **1.5 s**; talking or a quick smile should not count. Head-pose, phone, and seatbelt detection are not implemented yet.
+
+The OpenCV window is a development viewer for checking detectors. It is not the final product interface. A Streamlit dashboard (camera preview, scores, session report) is planned after the core modules work.
 
 ## Setup (Windows PowerShell)
 
@@ -37,12 +42,38 @@ If PowerShell prevents activation, run the interpreter directly:
 
 Press `q` while the video window is focused to close it. For an external camera, try `--camera-index 1`.
 
+The window shows EAR, MAR, eye state, blink count, drowsiness estimate, and **Mouth: CLOSED / OPEN / YAWNING**. Hold a real yawn (mouth open ~1.5 s) to increment the yawn count. Talking briefly should stay OPEN or CLOSED, not YAWNING.
+
+Starting thresholds (tune on your demo camera):
+
+- closed EAR below **0.21**, open again above **0.24** (hysteresis);
+- blink if a closure lasts **0.08–0.45 s**;
+- prolonged closure after **1.0 s** still shut;
+- mouth opening starts above MAR **0.60**, ends below **0.45**;
+- yawn if that opening lasts **1.5 s**.
+
+Phone-as-webcam example if natural blinks are missed or false:
+
+```powershell
+.\.venv\Scripts\python.exe -m src.face.landmark_viewer --camera-index 1 --closed-ear 0.20 --open-ear 0.23
+```
+
+If yawns never trigger, try `--open-mar 0.55 --yawn-seconds 1.2`.
+
+## Run tests
+
+```powershell
+.\.venv\Scripts\python.exe -m unittest discover -s tests
+```
+
 ## Project layout
 
 ```text
-src/face/              Face-landmark module (current milestone)
+src/face/              Landmarks, EAR, live viewer
+src/drowsiness/        Blink vs prolonged closure, drowsiness estimate
+src/yawning/           MAR and yawn tracker
 tests/                 Automated checks
 docs/                  Design notes and project documentation
 ```
 
-Later modules will be added only after this milestone is tested: drowsiness, yawning, head pose, object detection, risk assessment, alerts, logging, reporting, and dashboard.
+Later modules: head pose, object detection, risk assessment, alerts, logging, reporting, and dashboard.
